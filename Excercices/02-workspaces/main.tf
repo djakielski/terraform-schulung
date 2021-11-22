@@ -23,7 +23,7 @@ resource "aws_instance" "webserver"{
   user_data = <<-EOF
     #!/bin/bash
     echo "Hello, World" > index.html
-    nohup busybox httpd -f -p 80 &
+    nohup busybox httpd -f -p 8080 &
     EOF
   tags = {
     Name = "webserver - ${terraform.workspace}"
