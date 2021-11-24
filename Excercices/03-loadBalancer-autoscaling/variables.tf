@@ -14,9 +14,3 @@ variable "port" {
   default     = 80
   description = "Port of the webserver"
 }
-
-variable "numberOfInstances" {
-  type        = number
-  default     = 3
-  description = "number of webserver instances"
-}

@@ -1,33 +1,17 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~>3.0"
-    }
-  }
-}
-
-provider "aws" {
-  region="us-east-1"
-}
-
-provider "aws" {
-  region="eu-central-1"
-  alias = "eu"
+locals {
+  env = upper(terraform.workspace)
+  project = var.project
 }
 
 resource "aws_instance" "webserver"{
   ami = data.aws_ami.latest_hvm_ubuntu.id
   instance_type = var.instance_type
   security_groups = [aws_security_group.webserver.name]
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "Hello, World" > index.html
-    nohup busybox httpd -f -p 8080 &
-    EOF
+  user_data = templatefile("./scripts/initWebserver.sh", tomap({port =var.port
+  }))
   tags = {
-    Name = "webserver - ${terraform.workspace}"
-    Project = "TF_Training"
+    Name = "${local.project}-webserver-${local.env}"
+    Project = local.project
     LastModifiedAt = formatdate("EEEE, DD.MM.YYYY hh:mm:ss ZZZ",timestamp())
   }
   lifecycle {
@@ -36,19 +20,12 @@ resource "aws_instance" "webserver"{
 }
 
 resource "aws_security_group" "webserver"{
-  name="webserver-${random_pet.postfix.id}"
+  name="${local.project}-webserver-${local.env}"
   ingress {
-    from_port = 8080
+    from_port = var.port
     protocol = "tcp"
-    to_port = 8080
+    to_port = var.port
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "random_pet" "postfix" {
-  keepers = {
-    # Generate a new pet name each time we switch to a new AMI id
-    ami_id = data.aws_ami.latest_hvm_ubuntu.id
   }
 }
 
