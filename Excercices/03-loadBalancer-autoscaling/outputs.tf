@@ -4,6 +4,6 @@ output "dns_name" {
 }
 
 output "url" {
-  value       = "http://${aws_lb.webserver.dns_name}:${port}"
+  value       = "http://${aws_lb.webserver.dns_name}:${var.port}"
   description = "url of our webserver including port"
 }

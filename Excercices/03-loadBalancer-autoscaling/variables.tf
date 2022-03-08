@@ -14,3 +14,26 @@ variable "port" {
   default     = 80
   description = "Port of the webserver"
 }
+
+variable "autoscaling_active" {
+  type = bool
+  default = true
+  description = "feature switch for autoscaling"
+}
+
+variable "maxNumberOfInstances" {
+  type        = number
+  default     = 2
+  description = "maximum number of webserver instances when autoscaling is active"
+}
+variable "minNumberOfInstances" {
+  type        = number
+  default     = 1
+  description = "minimum number of webserver instances when autoscaling is active"
+}
+
+variable "numberOfInstances" {
+  type        = number
+  default     = 2
+  description = "number of webserver instances when autoscaling is not active"
+}

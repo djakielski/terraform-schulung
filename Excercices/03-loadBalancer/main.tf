@@ -19,6 +19,19 @@ resource "aws_instance" "webserver"{
   }
 }
 
+data "aws_ami" "latest_hvm_ubuntu" {
+  most_recent = true
+  owners = ["099720109477"] # Canonical
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm/ubuntu-*-*-amd64-server-*"]
+  }
+  filter {
+    name = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 resource "aws_security_group" "instances"{
   name="${local.project}-webserver-instances-${local.env}"
   ingress {
@@ -42,19 +55,6 @@ resource "aws_security_group" "webserver"{
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-data "aws_ami" "latest_hvm_ubuntu" {
-  most_recent = true
-  owners = ["099720109477"] # Canonical
-  filter {
-    name = "name"
-    values = ["ubuntu/images/hvm/ubuntu-*-*-amd64-server-*"]
-  }
-  filter {
-    name = "virtualization-type"
-    values = ["hvm"]
   }
 }
 
